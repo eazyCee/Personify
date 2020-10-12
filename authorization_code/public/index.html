@@ -23,6 +23,11 @@
         <a href="/login" class="btn btn-primary">Log in with Spotify</a>
       </div>
       <div id="loggedin">
+        <div id="options">
+          <button class="btn" id="short_term">Last Month</button>
+          <button class="btn" id="medium_term">Last 6 Months</button>
+          <button class="btn" id="long_term">All Time</button>
+        </div>
         <div id="user-profile">
         </div>
         <div id="oauth">
@@ -46,6 +51,7 @@
             <dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
             <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
             <dt>Country</dt><dd>{{country}}</dd>
+            <dt>Tracks</dt><dd>{{tracks}}</dd>
           </dl>
         </div>
       </div>
@@ -86,6 +92,69 @@
             oauthTemplate = Handlebars.compile(oauthSource),
             oauthPlaceholder = document.getElementById('oauth');
 
+  //       function retrieveTracks(timeRangeSlug, domNumber, domPeriod) {
+  //   $.ajax({
+  //     url: `https://api.spotify.com/v1/me/top/tracks?limit=10&time_range=${timeRangeSlug}`,
+  //     headers: {
+  //       Authorization: 'Bearer ' + access_token
+  //     },
+  //     success: function (response) {
+  //       var data = {
+  //         trackList: response.items,
+  //         total: 0,
+  //         date: today.toLocaleDateString('en-US', dateOptions).toUpperCase(),
+  //         json: true
+  //       };
+  //       for (var i = 0; i < data.trackList.length; i++) {
+  //         data.trackList[i].name = data.trackList[i].name.toUpperCase();
+  //         data.total += data.trackList[i].duration_ms;
+  //         let minutes = Math.floor(data.trackList[i].duration_ms / 60000);
+  //         let seconds = ((data.trackList[i].duration_ms % 60000) / 1000).toFixed(0);
+  //         data.trackList[i].duration_ms = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+  //         for (var j = 0; j < data.trackList[i].artists.length; j++) {
+  //           data.trackList[i].artists[j].name = data.trackList[i].artists[j].name.trim();
+  //           data.trackList[i].artists[j].name = data.trackList[i].artists[j].name.toUpperCase();
+  //           if (j != data.trackList[i].artists.length - 1) {
+  //             data.trackList[i].artists[j].name = data.trackList[i].artists[j].name + ', ';
+  //           }
+  //         }
+  //       }
+  //       minutes = Math.floor(data.total / 60000);
+  //       seconds = ((data.total % 60000) / 1000).toFixed(0);
+  //       data.total = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+  //       userProfilePlaceholder.innerHTML = userProfileTemplate({
+  //         tracks: data.trackList,
+  //         total: data.total,
+  //         time: data.date,
+  //         num: domNumber,
+  //         name: displayName,
+  //         period: domPeriod
+  //       });
+
+  //       document.getElementById('download').addEventListener('click', function () {
+  //         var offScreen = document.querySelector('.receiptContainer');
+
+  //         window.scrollTo(0, 0);
+  //         // Use clone with htm2canvas and delete clone
+  //         html2canvas(offScreen).then((canvas) => {
+  //           var dataURL = canvas.toDataURL();
+  //           console.log(dataURL);
+  //           var link = document.createElement('a');
+  //           link.download = `${timeRangeSlug}_receiptify.png`;
+  //           link.href = dataURL;
+  //           document.body.appendChild(link);
+  //           link.click();
+  //           document.body.removeChild(link);
+  //           delete link;
+  //         });
+  //       });
+  //     },
+  //     error: function(XMLHttpRequest, textStatus, errorThrown) {
+  //       // error handler here
+  //     }
+  //   });
+  // }
+
         var params = getHashParams();
 
         var access_token = params.access_token,
@@ -119,24 +188,26 @@
               $('#login').show();
               $('#loggedin').hide();
           }
+    document.getElementById('short_term').addEventListener('click', retrieveTracks('short_term', 1, 'LAST MONTH'), false);
+    document.getElementById('medium_term').addEventListener('click', retrieveTracks('medium_term', 2, 'LAST 6 MONTHS'), false);
+    document.getElementById('long_term').addEventListener('click', retrieveTracks('long_term', 3, 'ALL TIME'), false);
 
-          document.getElementById('obtain-new-token').addEventListener('click', function() {
-            $.ajax({
-              url: '/refresh_token',
-              data: {
-                'refresh_token': refresh_token
-              }
-            }).done(function(data) {
-              access_token = data.access_token;
-              oauthPlaceholder.innerHTML = oauthTemplate({
-                access_token: access_token,
-                refresh_token: refresh_token
-              });
-            });
-          }, false);
+          // document.getElementById('obtain-new-token').addEventListener('click', function() {
+          //   $.ajax({
+          //     url: '/refresh_token',
+          //     data: {
+          //       'refresh_token': refresh_token
+          //     }
+          //   }).done(function(data) {
+          //     access_token = data.access_token;
+          //     oauthPlaceholder.innerHTML = oauthTemplate({
+          //       access_token: access_token,
+          //       refresh_token: refresh_token
+          //     });
+          //   });
+          // }, false);
         }
       })();
     </script>
   </body>
 </html>
-

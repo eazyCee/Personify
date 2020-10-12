@@ -98,9 +98,17 @@ app.get('/callback', function(req, res) {
           json: true
         };
 
+        var topOptions = {
+          url: 'https://api.spotify.com/v1/me/top/tracks',
+          headers: { Authorization: 'Bearer ' + access_token },
+          json: true
+        };
+
         // use the access token to access the Spotify Web API
-        request.get(options, function(error, response, body) {
-          console.log(body);
+        request.get(topOptions, function(error, response, body) {
+          for (let i = 0; i < body.items.length; i++) {
+            console.log(body);
+          }
         });
 
         // we can also pass the token to the browser to make requests from there
