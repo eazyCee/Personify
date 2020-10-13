@@ -99,7 +99,7 @@ app.get('/callback', function(req, res) {
         };
 
         var topOptions = {
-          url: 'https://api.spotify.com/v1/me/top/tracks',
+          url: 'https://api.spotify.com/v1/me/top/artists',
           headers: { Authorization: 'Bearer ' + access_token },
           json: true
         };

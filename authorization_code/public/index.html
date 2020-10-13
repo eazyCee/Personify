@@ -25,13 +25,13 @@
       <div id="loggedin">
         <div id="options">
           <button class="btn" id="short_term">Last Month</button>
-          <button class="btn" id="medium_term">Last 6 Months</button>
-          <button class="btn" id="long_term">All Time</button>
+<!--           <button class="btn" id="medium_term">Last 6 Months</button>
+          <button class="btn" id="long_term">All Time</button> -->
         </div>
         <div id="user-profile">
         </div>
-        <div id="oauth">
-        </div>
+<!--         <div id="oauth">
+        </div> -->
         <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
       </div>
     </div>
@@ -44,26 +44,46 @@
         </div>
         <div class="media-body">
           <dl class="dl-horizontal">
-            <dt>Display name</dt><dd class="clearfix">{{display_name}}</dd>
-            <dt>Id</dt><dd>{{id}}</dd>
-            <dt>Email</dt><dd>{{email}}</dd>
-            <dt>Spotify URI</dt><dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
-            <dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
-            <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
-            <dt>Country</dt><dd>{{country}}</dd>
-            <dt>Tracks</dt><dd>{{tracks}}</dd>
+            <table class='artists'>
+          <thead>
+            <td class='begin'>
+              QTY
+            </td>
+            <td>
+              ITEM
+            </td>
+            <td class='length'>
+              AMT
+            </td>
+          </thead>
+       {{#each artists}}
+            <tr>
+              <td class='begin'>
+                0{{@index}}
+              </td>
+              <td class='name'>
+                {{this.name}} -
+                {{#each this.genres}}
+                  <span>
+                    {{this.genres}}
+                  </span>
+                {{/each}}
+              </td>
+            </tr>
+          {{/each}}
+        </table>
           </dl>
         </div>
       </div>
     </script>
 
-    <script id="oauth-template" type="text/x-handlebars-template">
+<!--     <script id="oauth-template" type="text/x-handlebars-template">
       <h2>oAuth info</h2>
       <dl class="dl-horizontal">
         <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
         <dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}</dd>
       </dl>
-    </script>
+    </script> -->
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
@@ -88,72 +108,66 @@
             userProfileTemplate = Handlebars.compile(userProfileSource),
             userProfilePlaceholder = document.getElementById('user-profile');
 
-        var oauthSource = document.getElementById('oauth-template').innerHTML,
-            oauthTemplate = Handlebars.compile(oauthSource),
-            oauthPlaceholder = document.getElementById('oauth');
+        // var oauthSource = document.getElementById('oauth-template').innerHTML,
+        //     oauthTemplate = Handlebars.compile(oauthSource),
+        //     oauthPlaceholder = document.getElementById('oauth');
 
-  //       function retrieveTracks(timeRangeSlug, domNumber, domPeriod) {
-  //   $.ajax({
-  //     url: `https://api.spotify.com/v1/me/top/tracks?limit=10&time_range=${timeRangeSlug}`,
-  //     headers: {
-  //       Authorization: 'Bearer ' + access_token
-  //     },
-  //     success: function (response) {
-  //       var data = {
-  //         trackList: response.items,
-  //         total: 0,
-  //         date: today.toLocaleDateString('en-US', dateOptions).toUpperCase(),
-  //         json: true
-  //       };
-  //       for (var i = 0; i < data.trackList.length; i++) {
-  //         data.trackList[i].name = data.trackList[i].name.toUpperCase();
-  //         data.total += data.trackList[i].duration_ms;
-  //         let minutes = Math.floor(data.trackList[i].duration_ms / 60000);
-  //         let seconds = ((data.trackList[i].duration_ms % 60000) / 1000).toFixed(0);
-  //         data.trackList[i].duration_ms = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-  //         for (var j = 0; j < data.trackList[i].artists.length; j++) {
-  //           data.trackList[i].artists[j].name = data.trackList[i].artists[j].name.trim();
-  //           data.trackList[i].artists[j].name = data.trackList[i].artists[j].name.toUpperCase();
-  //           if (j != data.trackList[i].artists.length - 1) {
-  //             data.trackList[i].artists[j].name = data.trackList[i].artists[j].name + ', ';
-  //           }
-  //         }
-  //       }
-  //       minutes = Math.floor(data.total / 60000);
-  //       seconds = ((data.total % 60000) / 1000).toFixed(0);
-  //       data.total = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-  //       userProfilePlaceholder.innerHTML = userProfileTemplate({
-  //         tracks: data.trackList,
-  //         total: data.total,
-  //         time: data.date,
-  //         num: domNumber,
-  //         name: displayName,
-  //         period: domPeriod
-  //       });
+        function retrieveArtists() {
+    $.ajax({
+      url: `https://api.spotify.com/v1/me/top/artists?time_range=medium_term&limit=5`,
+      headers: {
+        Authorization: 'Bearer ' + access_token
+      },
+      success: function (response) {
+        var data = {
+          artistList: response.items,
+          total: 0,
+          date: today.toLocaleDateString('en-US', dateOptions).toUpperCase(),
+          json: true
+        };
+        for (var i = 0; i < data.artistList.length; i++) {
+          data.artistList[i].name = data.artistList[i].name.toUpperCase();
+          for (var j = 0; j < data.artistList[i].genres; j++) {
+            data.artistList[i].genres[j] = data.artistList[i].genres[j].trim();
+            if (j != data.artistList[i].genres.length - 1) {
+              data.artistList[i].genres[j] = data.artistList[i].genres[j] + ', ';
+            }
+          }
 
-  //       document.getElementById('download').addEventListener('click', function () {
-  //         var offScreen = document.querySelector('.receiptContainer');
+          data.artistList[i].images = data.artistList[i].images[0];
+        }
+        userProfilePlaceholder.innerHTML = userProfileTemplate({
+          artists: data.artistList,
+          name: displayName,
+          num: domNumber,
+          period: domPeriod
+        });
 
-  //         window.scrollTo(0, 0);
-  //         // Use clone with htm2canvas and delete clone
-  //         html2canvas(offScreen).then((canvas) => {
-  //           var dataURL = canvas.toDataURL();
-  //           console.log(dataURL);
-  //           var link = document.createElement('a');
-  //           link.download = `${timeRangeSlug}_receiptify.png`;
-  //           link.href = dataURL;
-  //           document.body.appendChild(link);
-  //           link.click();
-  //           document.body.removeChild(link);
-  //           delete link;
-  //         });
-  //       });
-  //     },
-  //     error: function(XMLHttpRequest, textStatus, errorThrown) {
-  //       // error handler here
-  //     }
-  //   });
-  // }
+        document.getElementById('download').addEventListener('click', function () {
+          var offScreen = document.querySelector('.receiptContainer');
+
+          window.scrollTo(0, 0);
+          // Use clone with htm2canvas and delete clone
+          html2canvas(offScreen).then((canvas) => {
+            var dataURL = canvas.toDataURL();
+            console.log(dataURL);
+            var link = document.createElement('a');
+            link.download = `${timeRangeSlug}_receiptify.png`;
+            link.href = dataURL;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            delete link;
+          });
+        });
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) {
+        // error handler here
+      }
+    });
+
+    console.log(artistList);
+  }
 
         var params = getHashParams();
 
@@ -165,11 +179,11 @@
           alert('There was an error during the authentication');
         } else {
           if (access_token) {
-            // render oauth info
-            oauthPlaceholder.innerHTML = oauthTemplate({
-              access_token: access_token,
-              refresh_token: refresh_token
-            });
+            // // render oauth info
+            // oauthPlaceholder.innerHTML = oauthTemplate({
+            //   access_token: access_token,
+            //   refresh_token: refresh_token
+            // });
 
             $.ajax({
                 url: 'https://api.spotify.com/v1/me',
@@ -188,9 +202,7 @@
               $('#login').show();
               $('#loggedin').hide();
           }
-    document.getElementById('short_term').addEventListener('click', retrieveTracks('short_term', 1, 'LAST MONTH'), false);
-    document.getElementById('medium_term').addEventListener('click', retrieveTracks('medium_term', 2, 'LAST 6 MONTHS'), false);
-    document.getElementById('long_term').addEventListener('click', retrieveTracks('long_term', 3, 'ALL TIME'), false);
+    document.getElementById('short_term').addEventListener('click', retrieveArtists(), false);
 
           // document.getElementById('obtain-new-token').addEventListener('click', function() {
           //   $.ajax({

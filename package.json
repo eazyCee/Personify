@@ -1,13 +1,18 @@
 {
-  "author": "Spotify",
-  "name": "web-api-auth-examples",
-  "description": "Basic examples of the Spotify authorization flows through OAuth 2",
-  "version": "0.0.2",
+  "name": "receiptify",
+  "version": "1.0.0",
+  "description": "Genereates receipts based on a user's spotify listening history.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Michelle Liu",
+  "license": "ISC",
   "dependencies": {
-    "cookie-parser": "1.3.2",
-    "express": "~4.16.0",
-    "cors": "^2.8.4",
-    "querystring": "~0.2.0",
-    "request": "~2.83.0"
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "querystring": "^0.2.0",
+    "request": "^2.88.2"
   }
 }
